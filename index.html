@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Asymptote — Editorial Thought Partnership</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FCFCFA;
+    --ink:#1B1C1E;
+    --dim:#6C6E72;
+    --hair:#E4E4DF;
+    --accent:#2740A6;
+    --curve:#D3D7E2;
+    --curve-asym:#C2CAE6;
+    --curve-label:#B4BACC;
+    --card-bg:rgba(252,252,250,.82);
+  }
+  [data-theme="dark"]{
+    --paper:#101319;
+    --ink:#E9E8E3;
+    --dim:#9AA0A9;
+    --hair:#242832;
+    --accent:#8B9CF0;
+    --curve:#2B3346;
+    --curve-asym:#3C4870;
+    --curve-label:#4A5476;
+    --card-bg:rgba(16,19,25,.82);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Instrument Sans',system-ui,sans-serif;
+    font-size:17.5px;
+    line-height:1.65;
+    transition:background .3s,color .3s;
+  }
+  ::selection{background:var(--accent);color:var(--paper);}
+  #field{
+    position:fixed;inset:0;
+    width:100vw;height:100vh;
+    z-index:0;
+    pointer-events:none;
+  }
+  #field .asymline{stroke:var(--curve-asym);stroke-width:1;stroke-dasharray:6 7;}
+  #field .thecurve{stroke:var(--curve);stroke-width:1.6;fill:none;}
+  #field text{
+    font-family:'Instrument Sans',sans-serif;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    fill:var(--curve-label);
+  }
+  @media(max-width:760px){
+    #field .thecurve{opacity:.7;}
+    #field text{font-size:10px;}
+  }
+  .content{position:relative;z-index:1;}
+  .wrap{max-width:960px;margin:0 auto;padding:0 28px;}
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:26px 0;
+  }
+  .wordmark{font-family:'Newsreader',serif;font-weight:500;font-size:19px;}
+  .wordmark i{color:var(--accent);font-style:normal;}
+  .navside{display:flex;align-items:center;gap:26px;}
+  nav{display:flex;gap:26px;font-size:14.5px;}
+  nav a{color:var(--dim);text-decoration:none;}
+  nav a:hover{color:var(--accent);}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+  #themeToggle{
+    background:none;border:1px solid var(--hair);border-radius:50%;
+    width:34px;height:34px;cursor:pointer;color:var(--dim);
+    font-size:15px;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .2s;
+  }
+  #themeToggle:hover{border-color:var(--accent);color:var(--accent);}
+  .hero{padding:16vh 0 12vh;max-width:730px;}
+  h1{
+    font-family:'Newsreader',serif;font-weight:400;
+    font-size:clamp(40px,6.2vw,64px);
+    line-height:1.12;letter-spacing:-.01em;text-wrap:balance;
+  }
+  h1 em{font-style:italic;color:var(--accent);}
+  .hero .sub{margin-top:26px;font-size:19px;color:var(--dim);max-width:34em;}
+  .hero .sub b{color:var(--ink);font-weight:500;}
+  section{padding:64px 0 8px;}
+  .label{
+    font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);font-weight:500;margin-bottom:20px;
+  }
+  h2{
+    font-family:'Newsreader',serif;font-weight:400;
+    font-size:clamp(27px,3.6vw,36px);line-height:1.2;
+    margin-bottom:18px;max-width:22em;text-wrap:balance;
+  }
+  p{margin-bottom:1em;max-width:38em;}
+  .quiet{color:var(--dim);}
+  .svc{border-top:1px solid var(--hair);margin-top:6px;}
+  .row{
+    display:grid;grid-template-columns:1fr auto;gap:20px;
+    padding:20px 0;border-bottom:1px solid var(--hair);
+    align-items:baseline;
+  }
+  .row .what{font-family:'Newsreader',serif;font-size:22px;}
+  .row .how{font-size:15px;color:var(--dim);margin-top:3px;max-width:34em;}
+  .row .fee{font-size:15px;font-weight:500;color:var(--accent);white-space:nowrap;}
+  .svc-foot{font-size:15px;color:var(--dim);font-style:italic;margin-top:14px;font-family:'Newsreader',serif;}
+  .exhibits{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px;}
+  .card{
+    border:1px solid var(--hair);
+    background:var(--card-bg);
+    backdrop-filter:blur(2px);
+    padding:22px 20px 24px;
+    transition:border-color .2s;
+  }
+  .card:hover{border-color:var(--accent);}
+  .card .n{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:12px;}
+  .card h3{font-family:'Newsreader',serif;font-weight:500;font-size:20px;margin-bottom:8px;}
+  .card p{font-size:15px;color:var(--dim);margin-bottom:12px;}
+  .card a{font-size:14.5px;color:var(--accent);text-decoration:none;font-weight:500;}
+  .card a:hover{text-decoration:underline;}
+  .contact{padding:90px 0 40px;max-width:680px;}
+  /* ---------- the composer ---------- */
+  .composer{margin-top:30px;}
+  .q{margin-bottom:26px;}
+  .q .qlabel{font-family:'Newsreader',serif;font-size:19px;margin-bottom:10px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    font-family:'Instrument Sans',sans-serif;font-size:14.5px;
+    border:1px solid var(--hair);background:none;color:var(--dim);
+    padding:8px 16px;border-radius:999px;cursor:pointer;
+    transition:border-color .15s,color .15s,background .15s;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent);}
+  .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper);}
+  .q textarea{
+    width:100%;min-height:76px;resize:vertical;
+    font-family:'Instrument Sans',sans-serif;font-size:15.5px;line-height:1.55;
+    color:var(--ink);background:var(--card-bg);
+    border:1px solid var(--hair);border-radius:2px;padding:12px 14px;
+  }
+  .q textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .q .hint{font-size:13.5px;color:var(--dim);font-style:italic;margin-top:6px;}
+  .preview{
+    border:1px solid var(--hair);border-left:3px solid var(--accent);
+    background:var(--card-bg);backdrop-filter:blur(2px);
+    padding:18px 20px;margin:6px 0 18px;
+    font-size:15px;line-height:1.6;color:var(--dim);
+    white-space:pre-wrap;
+  }
+  .preview b{color:var(--ink);font-weight:500;}
+  .composer-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+  .escape{font-size:14px;color:var(--dim);}
+  .escape a{color:var(--dim);}
+  .escape a:hover{color:var(--accent);}
+  .cta{
+    display:inline-block;margin-top:18px;
+    background:var(--accent);color:var(--paper);
+    text-decoration:none;font-weight:500;font-size:15.5px;
+    padding:15px 30px;border-radius:2px;
+    transition:opacity .2s;
+  }
+  .cta:hover{opacity:.88;}
+  footer{
+    padding:30px 0 46px;
+    display:flex;justify-content:space-between;gap:12px;
+    font-size:13px;color:var(--dim);
+    border-top:1px solid var(--hair);margin-top:50px;
+  }
+  footer .wink{font-family:'Newsreader',serif;font-style:italic;}
+  @media(max-width:760px){
+    .exhibits{grid-template-columns:1fr;}
+    nav{display:none;}
+    .hero{padding-top:10vh;}
+    footer{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<svg id="field" aria-hidden="true">
+  <g id="fieldInner"></g>
+  <g id="fieldLabels"></g>
+</svg>
+
+<div class="content">
+<div class="wrap">
+
+  <header>
+    <div class="wordmark">The <i>Asymptote</i></div>
+    <div class="navside">
+      <nav>
+        <a href="#method">Method</a>
+        <a href="#services">Services</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">◐</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <h1>How do you say what you mean?</h1>
+    <p class="sub">Editorial thought partnership for writers whose ideas outrun their drafts — <b>essays, manuscripts, talks, and applications</b>. Let me help you close the distance.</p>
+  </div>
+
+  <section id="method">
+    <div class="label">Method</div>
+    <h2>Excavation before markup.</h2>
+    <p>You can feel the vibe of what you're thinking, but you're convinced there's no way to give that vibe a shape. That concretization is where I can help most. I ask the questions that identify the roots of your ideas so that we can give them structure and punch.</p>
+    <p>Every engagement starts with diagnosis: a memo on what the piece is doing, what it wants to do, and the distance between the two. How we dialogue from there is up to you: in writing, by call, or even in person. Only once we share a vision do we get involved in revision and rehaul, line work, and polishing.</p>
+    <p>For some clients, I can also hold the pen on your behalf. After enough excavation, I write the first draft in your voice, and you steer us in the refinement. The authorship stays yours; I only ever put on the page what our dialogue surfaced.</p>
+    <p class="quiet">I'm someone engaged in writing about the hard work of thinking and knowing, so I can meet your argument on the merits, not just its grammar. I welcome a challenge.</p>
+  </section>
+
+  <section id="services">
+    <div class="label">Services &amp; Fees</div>
+
+    <div class="label" style="margin-top:28px;">Ongoing — monthly</div>
+    <div class="svc">
+      <div class="row"><div><div class="what">Thought partnership (inc. ghostwriting)</div><div class="how">I spend the time and effort to grasp how you reason, how you argue, and how you write. You tell me about what it is your brain needs to put out into the world so that I can help bring it into reality — nothing goes on the page that didn't surface in our dialogue.</div></div><div class="fee">from $3,500/mo</div></div>
+      <div class="row"><div><div class="what">Editorial thought partnership</div><div class="how">Ongoing essay development, talk preparation, and argument work. You draft; I excavate, diagnose, and develop alongside you.</div></div><div class="fee">from $2,500/mo</div></div>
+      <div class="row"><div><div class="what">Monthly coaching</div><div class="how">Two calls a month and feedback on pages as you produce them, within an agreed scope.</div></div><div class="fee">from $850/mo</div></div>
+    </div>
+
+    <div class="label" style="margin-top:28px;">One-off engagements</div>
+    <div class="svc">
+      <div class="row"><div><div class="what">Essay &amp; long-form memo</div><div class="how">Diagnostic memo on a piece up to ~6,000 words, with an optional call.</div></div><div class="fee">$450–600</div></div>
+      <div class="row"><div><div class="what">Graduate application &amp; fellowship review</div><div class="how">Statements and essays, one revision pass. Rush available, because deadlines are always on fire.</div></div><div class="fee">$600–900</div></div>
+      <div class="row"><div><div class="what">Talk development</div><div class="how">Excavation call, outline memo, and one pass on the draft.</div></div><div class="fee">$600–800</div></div>
+      <div class="row"><div><div class="what">Manuscript evaluation</div><div class="how">A full diagnostic memo on a complete manuscript, priced to length.</div></div><div class="fee">from $1,800</div></div>
+    </div>
+
+    <p class="svc-foot">Single pieces are the best opportunity for us to find out whether we think well together; afterwards, most one-off clients move into monthly work. Engagements begin with a 50% deposit.</p>
+
+    <div class="label" style="margin-top:36px;">College applications</div>
+    <div class="svc">
+      <div class="row"><div><div class="what">College essay coaching</div><div class="how">For high-school applicants: excavation calls to surface <em>your</em> story, then editorial passes during drafting. Can include supplemental statements. Parents welcome at the first call or to discuss logistics, but the student should take the reins for the drafting calls.</div></div><div class="fee">from $1,500</div></div>
+      <div class="row"><div><div class="what">Personal statement review</div><div class="how">One diagnostic pass and a call on a single essay. For the draft that's technically finished, but you're unsure for any number of reasons ("something feels off," "I've read this too many times to know what to think anymore," etc.).</div></div><div class="fee">$250–350</div></div>
+    </div>
+    <p class="svc-foot">Baseline coaching covers the primary personal statement. We start with a diagnostic call based on your existing draft (if any), then two to three shaping calls to confirm the premise and find your voice as you draft, then editorial rounds (up to three) once a solidly fleshed-out draft exists. Supplementals and additional rounds extend from there. Calls are generally an hour long, though this depends on your participation.</p>
+
+    <p class="svc-foot">Engagements begin with a 50% deposit.</p>
+
+  </section>
+
+  <section id="evidence">
+    <div class="label">Evidence</div>
+    <div class="exhibits">
+      <div class="card">
+        <span class="n">Exhibit I</span>
+        <h3>A feedback memo</h3>
+        <p>Developmental diagnosis of a nonfiction manuscript on AI and democratic governance. Shared with the author's permission; identifying details removed.</p>
+        <a href="exhibit-i-feedback-memo.pdf">Read the memo →</a>
+      </div>
+      <div class="card">
+        <span class="n">Exhibit II</span>
+        <h3>A client letter</h3>
+        <p>What the working conversation actually sounds like.</p>
+        <a href="exhibit-ii-client-letter.pdf">Read the letter →</a>
+      </div>
+      <div class="card">
+        <span class="n">Exhibit III</span>
+        <h3>My own writing</h3>
+        <p>Lives at <em>43 Arcseconds</em> — on trust collapse and the epistemics of knowing anything at all.</p>
+        <a href="knowing-everything-and-nothing.pdf">Read "Knowing Everything and Nothing" (PDF) →</a><br>
+        <a href="https://43arcsec.substack.com">Visit 43 Arcseconds →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="label">Contact</div>
+    <h2>Tell me what's stuck.</h2>
+    <p class="quiet">Not sure what to write? Answer these and the email writes itself.</p>
+
+    <div class="composer">
+      <div class="q">
+        <div class="qlabel">What are you writing?</div>
+        <div class="chips" id="qWhat" role="group" aria-label="What are you writing">
+          <button class="chip" aria-pressed="false" data-v="an essay">Essay</button>
+          <button class="chip" aria-pressed="false" data-v="a book manuscript">Manuscript</button>
+          <button class="chip" aria-pressed="false" data-v="a talk">Talk</button>
+          <button class="chip" aria-pressed="false" data-v="an application">Application</button>
+          <button class="chip" aria-pressed="false" data-v="something harder to categorize">Something else</button>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="qlabel">Where does it currently live?</div>
+        <div class="chips" id="qState" role="group" aria-label="Current state">
+          <button class="chip" aria-pressed="false" data-v="it's still mostly notes and fragments">Notes &amp; fragments</button>
+          <button class="chip" aria-pressed="false" data-v="a draft exists, but it's not right yet">A draft exists</button>
+          <button class="chip" aria-pressed="false" data-v="it's technically finished, but it doesn't say what I mean">"Done," but wrong</button>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="qlabel">What's the stuck part?</div>
+        <textarea id="qStuck" rows="3" placeholder="Say it the way you'd say it to a friend — or even how your friend described it to you on their own read. &quot;The middle sags,&quot; &quot;It reads flat,&quot; &quot;I can't tell what it's arguing anymore&quot;…"></textarea>
+        <div class="hint">Imprecision welcome. Locating the precise version is my job, not yours.</div>
+      </div>
+
+      <div class="q">
+        <div class="qlabel">What's it for? <span style="color:var(--dim);font-size:15px;">(optional)</span></div>
+        <textarea id="qFor" rows="2" placeholder="A publication, a fellowship, a stage, your own peace of mind…"></textarea>
+      </div>
+
+      <div class="preview" id="preview" aria-live="polite"></div>
+
+      <div class="composer-actions">
+        <a class="cta" id="sendBtn" href="mailto:hello@theasymptote.co">Open this in your email app</a>
+        <span class="escape">Forms not your thing? Just write to <a href="mailto:hello@theasymptote.co">hello@theasymptote.co</a>.</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>The Asymptote · New York</span>
+    <span class="wink">Approaching, indefinitely.</span>
+  </footer>
+
+</div>
+</div>
+
+<script>
+(function(){
+  var svg = document.getElementById('field');
+  var inner = document.getElementById('fieldInner');
+  var labels = document.getElementById('fieldLabels');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- theme ---------- */
+  var root = document.documentElement;
+  var pref = window.matchMedia('(prefers-color-scheme: dark)');
+  function setTheme(t){ root.setAttribute('data-theme', t); }
+  setTheme(pref.matches ? 'dark' : 'light');
+  pref.addEventListener('change', function(e){ setTheme(e.matches ? 'dark' : 'light'); });
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ---------- the field ---------- */
+  function build(){
+    var W = window.innerWidth, H = window.innerHeight;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    inner.innerHTML = '';
+    labels.innerHTML = '';
+
+    var yA = H * 0.18;
+    var y0 = H * 0.92;
+    /* looser tau: at x=W the remaining gap is (y0-yA)*e^(-W/tau) */
+    /* tau = W/4 → e^(-4) ≈ 0.018 → gap ≈ 10-13px depending on viewport: visibly never touching */
+    var tau = W / 4;
+
+    var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', 0); line.setAttribute('y1', yA);
+    line.setAttribute('x2', W); line.setAttribute('y2', yA);
+    line.setAttribute('class','asymline');
+    inner.appendChild(line);
+
+    var N = 260, d = '';
+    for (var i = 0; i <= N; i++){
+      var x = (W * i) / N;
+      var y = yA + (y0 - yA) * Math.exp(-x / tau);
+      d += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ' ' + y.toFixed(2) + ' ';
+    }
+    var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', d);
+    path.setAttribute('class','thecurve');
+    inner.appendChild(path);
+
+    var t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t1.setAttribute('x', W - 24); t1.setAttribute('y', yA - 10);
+    t1.setAttribute('text-anchor','end');
+    t1.textContent = 'the thinking';
+    labels.appendChild(t1);
+
+    var t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t2.setAttribute('x', 24); t2.setAttribute('y', Math.min(y0 + 24, H - 14));
+    t2.textContent = 'the draft';
+    labels.appendChild(t2);
+
+    var len = path.getTotalLength();
+    if (!reduced && !svg.dataset.drawn){
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = len;
+      path.getBoundingClientRect();
+      path.style.transition = 'stroke-dashoffset 2.8s cubic-bezier(.4,0,.2,1)';
+      requestAnimationFrame(function(){ path.style.strokeDashoffset = '0'; });
+      svg.dataset.drawn = '1';
+    }
+  }
+
+  build();
+
+  /* labels fade as you scroll past the hero, so they never collide with content */
+  window.addEventListener('scroll', function(){
+    var f = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.35));
+    labels.style.opacity = f;
+  }, { passive: true });
+  var rt;
+  window.addEventListener('resize', function(){
+    clearTimeout(rt); rt = setTimeout(build, 160);
+  });
+
+  /* ---------- recede on scroll ----------
+     Full strength on the hero screen; by one viewport of scroll,
+     the field settles to a quiet floor and stays there. */
+  var MIN_OP = 0.28;
+  var ticking = false;
+  function recede(){
+    var H = window.innerHeight;
+    var t = Math.min(window.scrollY / (H * 0.9), 1);
+    /* ease-out so the retreat feels gradual, not linear */
+    var eased = 1 - (1 - t) * (1 - t);
+    var op = 1 - eased * (1 - MIN_OP);
+    inner.style.opacity = op;
+    labels.style.opacity = op;
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if (!ticking){ requestAnimationFrame(recede); ticking = true; }
+  }, {passive:true});
+  recede();
+
+  /* ---------- the composer ---------- */
+  var ADDR = 'hello@theasymptote.co';
+  var picked = { what:null, state:null };
+
+  function wireChips(groupId, key){
+    var group = document.getElementById(groupId);
+    group.addEventListener('click', function(e){
+      var btn = e.target.closest('.chip');
+      if(!btn) return;
+      var already = btn.getAttribute('aria-pressed') === 'true';
+      group.querySelectorAll('.chip').forEach(function(c){ c.setAttribute('aria-pressed','false'); });
+      if(!already){ btn.setAttribute('aria-pressed','true'); picked[key] = btn.dataset.v; }
+      else { picked[key] = null; }
+      compose();
+    });
+  }
+  wireChips('qWhat','what');
+  wireChips('qState','state');
+  document.getElementById('qStuck').addEventListener('input', compose);
+  document.getElementById('qFor').addEventListener('input', compose);
+
+  function compose(){
+    var stuck = document.getElementById('qStuck').value.trim();
+    var forWhat = document.getElementById('qFor').value.trim();
+    var lines = ['Hi Joni,',''];
+
+    if (picked.what || picked.state){
+      var s = "I'm working on " + (picked.what || 'something') +
+              (picked.state ? ', and ' + picked.state : '') + '.';
+      lines.push(s);
+    } else {
+      lines.push("I'm working on something and it isn't where I want it yet.");
+    }
+    if (stuck){ lines.push('', "Here's the stuck part, roughly: " + stuck); }
+    if (forWhat){ lines.push('', "It's for: " + forWhat); }
+    lines.push('', 'Is this the kind of thing you work on?', '');
+
+    var body = lines.join('\n');
+    var subj = 'Something\u2019s stuck' + (picked.what ? ': ' + picked.what : '');
+
+    document.getElementById('preview').textContent = body;
+    document.getElementById('sendBtn').setAttribute('href',
+      'mailto:' + ADDR +
+      '?subject=' + encodeURIComponent(subj) +
+      '&body=' + encodeURIComponent(body)
+    );
+  }
+  compose();
+})();
+</script>
+</body>
+</html>
